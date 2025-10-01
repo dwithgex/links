@@ -7,59 +7,90 @@ export default function Home() {
   useEffect(() => {
     setIsVisible(true);
     
-    apiRequest("POST", "/api/track/visit").catch((error) => {
+    apiRequest("POST", "/api/track/visit", {
+      referrer: document.referrer || null,
+      userAgent: navigator.userAgent || null,
+    }).catch((error) => {
       console.error("Failed to track visit:", error);
     });
   }, []);
 
   const handleLinkClick = async (platform: string, url: string) => {
-    try {
-      await apiRequest("POST", "/api/track/click", { platform, url });
-    } catch (error) {
-      console.error("Failed to track click:", error);
+    const trackData = {
+      platform,
+      url,
+      referrer: document.referrer || null,
+    };
+
+    if (navigator.sendBeacon) {
+      const blob = new Blob([JSON.stringify(trackData)], { type: "application/json" });
+      navigator.sendBeacon("/api/track/click", blob);
+    } else {
+      try {
+        await fetch("/api/track/click", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(trackData),
+          keepalive: true,
+        });
+      } catch (error) {
+        console.error("Failed to track click:", error);
+      }
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start py-0 md:py-8">
-      <div className="w-full max-w-2xl mx-auto px-4 md:px-6">
+    <div className="min-h-screen flex flex-col items-center justify-start py-0 md:py-8 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-40 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="w-full max-w-2xl mx-auto px-4 md:px-6 relative z-10">
         {/* Banner Section */}
         <div 
-          className={`relative w-full h-48 md:h-64 rounded-t-2xl md:rounded-2xl overflow-hidden mb-0 md:mb-4 transition-opacity duration-600 ${isVisible ? 'opacity-100 fade-in' : 'opacity-0'}`}
+          className={`relative w-full h-56 md:h-72 rounded-t-2xl md:rounded-2xl overflow-hidden mb-0 md:mb-4 transition-opacity duration-600 shadow-2xl ${isVisible ? 'opacity-100 fade-in' : 'opacity-0'}`}
         >
           <img 
             src="https://cdn.getallmylinks.com/cdn-cgi/image/w=860,h=1864,q=90,fit=cover,f=auto,onerror=redirect/https://images.getallmylinks.com/backgrounds/club-dorado-banner-1-68be1ccedc4d0163194063.jpg" 
             alt="withgex profile banner - Club Dorado theme"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
             data-testid="img-banner"
           />
           <div className="banner-overlay absolute inset-0"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent"></div>
         </div>
 
         {/* Profile Content Card */}
         <div 
-          className={`glass-card rounded-b-2xl md:rounded-2xl p-6 md:p-8 relative transition-all duration-600 delay-200 ${isVisible ? 'opacity-100 slide-up' : 'opacity-0'}`}
+          className={`glass-card rounded-b-2xl md:rounded-2xl p-6 md:p-8 relative transition-all duration-600 delay-200 shadow-xl ${isVisible ? 'opacity-100 slide-up' : 'opacity-0'}`}
         >
           {/* Avatar Section */}
           <div className="flex flex-col items-center -mt-20 md:-mt-24 mb-6">
             <div 
-              className="w-32 h-32 md:w-36 md:h-36 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-5xl md:text-6xl font-bold border-4 border-background avatar-glow"
+              className="w-36 h-36 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-primary via-accent to-secondary flex items-center justify-center text-white text-6xl md:text-7xl font-bold border-4 border-background avatar-glow relative group cursor-pointer transition-transform hover:scale-105"
               data-testid="avatar-withgex"
             >
-              W
+              <span className="relative z-10">W</span>
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 blur-xl group-hover:blur-2xl transition-all"></div>
             </div>
           </div>
 
           {/* Profile Info */}
           <div 
-            className={`text-center mb-8 transition-all duration-600 delay-300 ${isVisible ? 'opacity-100 slide-up' : 'opacity-0'}`}
+            className={`text-center mb-10 transition-all duration-600 delay-300 ${isVisible ? 'opacity-100 slide-up' : 'opacity-0'}`}
           >
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2" data-testid="text-username">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent mb-3 tracking-tight" data-testid="text-username">
               withgex
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground" data-testid="text-handle">
+            <p className="text-xl md:text-2xl text-muted-foreground font-light mb-4" data-testid="text-handle">
               @withgex
             </p>
+            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span>Activo ahora</span>
+            </div>
           </div>
 
           {/* Social Links Section */}
@@ -72,18 +103,26 @@ export default function Home() {
               target="_blank" 
               rel="noopener noreferrer"
               onClick={() => handleLinkClick("Instagram", "https://www.instagram.com/withgex")}
-              className="flex items-center justify-center gap-3 w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium py-4 px-6 rounded-xl shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl active:scale-95"
+              className="group flex items-center justify-between w-full bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 hover:from-purple-700 hover:via-pink-700 hover:to-rose-700 text-white font-semibold py-5 px-7 rounded-2xl shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl active:scale-95 relative overflow-hidden"
               data-testid="link-instagram"
             >
-              <svg 
-                className="w-6 h-6" 
-                fill="currentColor" 
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+              <div className="flex items-center gap-4 relative z-10">
+                <div className="p-2 bg-white/20 rounded-xl group-hover:bg-white/30 transition-colors">
+                  <svg 
+                    className="w-7 h-7" 
+                    fill="currentColor" 
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                  </svg>
+                </div>
+                <span className="text-xl">Instagram</span>
+              </div>
+              <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
-              <span className="text-lg">Instagram</span>
             </a>
 
             {/* TikTok Link */}
@@ -92,27 +131,41 @@ export default function Home() {
               target="_blank" 
               rel="noopener noreferrer"
               onClick={() => handleLinkClick("TikTok", "https://www.tiktok.com/@gextrap")}
-              className="flex items-center justify-center gap-3 w-full bg-gradient-to-r from-black to-gray-900 hover:from-gray-900 hover:to-black text-white font-medium py-4 px-6 rounded-xl shadow-lg border border-white/10 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl active:scale-95"
+              className="group flex items-center justify-between w-full bg-gradient-to-r from-gray-900 via-black to-gray-900 hover:from-black hover:via-gray-900 hover:to-black text-white font-semibold py-5 px-7 rounded-2xl shadow-lg border-2 border-white/20 hover:border-white/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl active:scale-95 relative overflow-hidden"
               data-testid="link-tiktok"
             >
-              <svg 
-                className="w-6 h-6" 
-                fill="currentColor" 
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+              <div className="flex items-center gap-4 relative z-10">
+                <div className="p-2 bg-white/10 rounded-xl group-hover:bg-white/20 transition-colors">
+                  <svg 
+                    className="w-7 h-7" 
+                    fill="currentColor" 
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                  </svg>
+                </div>
+                <span className="text-xl">TikTok</span>
+              </div>
+              <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
-              <span className="text-lg">TikTok</span>
             </a>
           </div>
 
           {/* Footer Info */}
           <div 
-            className={`mt-12 text-center text-muted-foreground text-sm transition-all duration-600 delay-500 ${isVisible ? 'opacity-100 slide-up' : 'opacity-0'}`}
+            className={`mt-14 text-center transition-all duration-600 delay-500 ${isVisible ? 'opacity-100 slide-up' : 'opacity-0'}`}
             data-testid="text-footer"
           >
-            <p>© 2024 withgex. All links in one place.</p>
+            <div className="h-px w-24 mx-auto bg-gradient-to-r from-transparent via-border to-transparent mb-6"></div>
+            <p className="text-muted-foreground/80 text-sm mb-2">
+              © 2024 withgex. Todos mis enlaces en un solo lugar.
+            </p>
+            <p className="text-xs text-muted-foreground/60">
+              Creado con ❤️ para conectar
+            </p>
           </div>
         </div>
       </div>

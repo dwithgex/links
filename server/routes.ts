@@ -16,19 +16,28 @@ declare module "express-session" {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  if (!process.env.SESSION_SECRET) {
+    throw new Error("SESSION_SECRET environment variable is required");
+  }
+
+  if (!process.env.ADMIN_PASSWORD) {
+    throw new Error("ADMIN_PASSWORD environment variable is required");
+  }
+
   app.use(
     session({
       store: new PgSession({
         pool,
         createTableIfMissing: true,
       }),
-      secret: process.env.SESSION_SECRET || "your-secret-key-change-in-production",
+      secret: process.env.SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
       cookie: {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
       },
     })
   );
@@ -36,8 +45,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/track/visit", async (req: Request, res: Response) => {
     try {
       const data = insertVisitSchema.parse({
-        referrer: req.headers.referer || null,
-        userAgent: req.headers["user-agent"] || null,
+        referrer: req.body.referrer || req.headers.referer || null,
+        userAgent: req.body.userAgent || req.headers["user-agent"] || null,
       });
       const visit = await storage.createVisit(data);
       res.json({ success: true, visit });
@@ -51,7 +60,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const data = insertClickSchema.parse({
         platform: req.body.platform,
         url: req.body.url,
-        referrer: req.headers.referer || null,
+        referrer: req.body.referrer || req.headers.referer || null,
       });
       const click = await storage.createClick(data);
       res.json({ success: true, click });

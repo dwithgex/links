@@ -1,6 +1,6 @@
 # Overview
 
-This is a full-stack web application built with React and Express, featuring a modern UI component library (shadcn/ui) and PostgreSQL database integration via Drizzle ORM. The application uses a monorepo structure with shared type definitions between client and server. The current implementation includes a profile page displaying user information with a "Club Dorado" themed design, though the backend routing and business logic are minimal stubs ready for implementation.
+This is a full-stack social media landing page application for "withgex" built with React and Express. The application features a modern UI with analytics tracking, an admin dashboard for monitoring visitor statistics, and a responsive design optimized for all devices. It uses PostgreSQL for data persistence, shadcn/ui for components, and includes session-based authentication for secure admin access.
 
 # User Preferences
 
@@ -72,12 +72,25 @@ users table:
   - id: varchar (primary key, auto-generated UUID)
   - username: text (unique, not null)
   - password: text (not null)
+
+visits table:
+  - id: varchar (primary key, auto-generated UUID)
+  - referrer: text (nullable - source URL from document.referrer)
+  - userAgent: text (nullable - browser/device information)
+  - timestamp: timestamp (default now)
+
+clicks table:
+  - id: varchar (primary key, auto-generated UUID)
+  - platform: text (social media platform name)
+  - url: text (destination URL)
+  - referrer: text (nullable - source URL)
+  - timestamp: timestamp (default now)
 ```
 
 **Storage Interface Pattern**:
 - Abstract `IStorage` interface defines CRUD operations
-- `MemStorage` implements in-memory storage for development
-- Ready to swap for `PgStorage` or similar PostgreSQL implementation
+- `DatabaseStorage` implements PostgreSQL operations using Drizzle ORM
+- Methods for creating visits/clicks and retrieving analytics statistics
 
 **Pros**:
 - Full type safety from database to UI
