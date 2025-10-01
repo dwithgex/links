@@ -1,14 +1,23 @@
 import { useState, useEffect } from "react";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function Home() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
+    
+    apiRequest("POST", "/api/track/visit").catch((error) => {
+      console.error("Failed to track visit:", error);
+    });
   }, []);
 
-  const handleLinkClick = (platform: string) => {
-    console.log(`Link clicked: ${platform}`);
+  const handleLinkClick = async (platform: string, url: string) => {
+    try {
+      await apiRequest("POST", "/api/track/click", { platform, url });
+    } catch (error) {
+      console.error("Failed to track click:", error);
+    }
   };
 
   return (
@@ -62,7 +71,7 @@ export default function Home() {
               href="https://www.instagram.com/withgex" 
               target="_blank" 
               rel="noopener noreferrer"
-              onClick={() => handleLinkClick("Instagram")}
+              onClick={() => handleLinkClick("Instagram", "https://www.instagram.com/withgex")}
               className="flex items-center justify-center gap-3 w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium py-4 px-6 rounded-xl shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl active:scale-95"
               data-testid="link-instagram"
             >
@@ -82,7 +91,7 @@ export default function Home() {
               href="https://www.tiktok.com/@gextrap" 
               target="_blank" 
               rel="noopener noreferrer"
-              onClick={() => handleLinkClick("TikTok")}
+              onClick={() => handleLinkClick("TikTok", "https://www.tiktok.com/@gextrap")}
               className="flex items-center justify-center gap-3 w-full bg-gradient-to-r from-black to-gray-900 hover:from-gray-900 hover:to-black text-white font-medium py-4 px-6 rounded-xl shadow-lg border border-white/10 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl active:scale-95"
               data-testid="link-tiktok"
             >
