@@ -7,6 +7,7 @@ import Home from "@/pages/home";
 import AdminLogin from "@/pages/admin-login";
 import AdminDashboard from "@/pages/admin-dashboard";
 import NotFound from "@/pages/not-found";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 // Configurar el base path para GitHub Pages
 const basePath = import.meta.env.PROD ? "/withgex" : "";
@@ -17,7 +18,11 @@ function Router() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/admin-login" component={AdminLogin} />
-        <Route path="/admin" component={AdminDashboard} />
+        <Route path="/admin">
+          <ProtectedRoute>
+            <AdminDashboard />
+          </ProtectedRoute>
+        </Route>
         <Route component={NotFound} />
       </Switch>
     </WouterRouter>

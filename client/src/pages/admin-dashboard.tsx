@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { RefreshCw, Download, LogOut, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { useDiscordAuth } from "@/hooks/useDiscordAuth";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,6 +21,7 @@ import {
 export default function AdminDashboard() {
   const [selectedPeriod, setSelectedPeriod] = useState("7");
   const [refreshKey, setRefreshKey] = useState(0);
+  const { logout } = useDiscordAuth();
   
   const currentDate = new Date().toLocaleDateString('es-ES', {
     year: 'numeric',
@@ -45,9 +47,11 @@ export default function AdminDashboard() {
   const { data: usersData, isLoading: usersLoading, refetch: refetchUsers } = useQuery({
     queryKey: ["users-analytics", selectedPeriod, refreshKey],
     queryFn: async () => {
-      const response = await fetch(`/api/analytics/users?days=${selectedPeriod}`);
-      if (!response.ok) throw new Error("Error al obtener datos de usuarios");
-      return response.json();
+      // Datos mock para GitHub Pages
+      return {
+        totalUniqueUsers: 42,
+        previousUniqueUsers: 35
+      };
     },
   });
 
@@ -55,9 +59,18 @@ export default function AdminDashboard() {
   const { data: visitsData, isLoading: visitsLoading, refetch: refetchVisits } = useQuery({
     queryKey: ["visits-analytics", selectedPeriod, refreshKey],
     queryFn: async () => {
-      const response = await fetch(`/api/analytics/stats?days=${selectedPeriod}`);
-      if (!response.ok) throw new Error("Error al obtener datos de visitas");
-      return response.json();
+      // Datos mock para GitHub Pages
+      const days = parseInt(selectedPeriod);
+      const visitsByDay = Array.from({ length: days }, (_, i) => ({
+        date: new Date(Date.now() - (days - 1 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        count: Math.floor(Math.random() * 20) + 5
+      }));
+      
+      return {
+        totalVisits: visitsByDay.reduce((sum, day) => sum + day.count, 0),
+        previousVisits: Math.floor(Math.random() * 100) + 50,
+        visitsByDay
+      };
     },
   });
 
@@ -65,9 +78,14 @@ export default function AdminDashboard() {
   const { data: clicksData, isLoading: clicksLoading, refetch: refetchClicks } = useQuery({
     queryKey: ["clicks-analytics", refreshKey],
     queryFn: async () => {
-      const response = await fetch("/api/analytics/clicks");
-      if (!response.ok) throw new Error("Error al obtener datos de clics");
-      return response.json();
+      // Datos mock para GitHub Pages
+      return [
+        { platform: 'Instagram', timestamp: new Date().toISOString() },
+        { platform: 'TikTok', timestamp: new Date().toISOString() },
+        { platform: 'Instagram', timestamp: new Date().toISOString() },
+        { platform: 'Instagram', timestamp: new Date().toISOString() },
+        { platform: 'TikTok', timestamp: new Date().toISOString() },
+      ];
     },
   });
 
@@ -75,9 +93,18 @@ export default function AdminDashboard() {
   const { data: clicksByDayData, isLoading: clicksByDayLoading, refetch: refetchClicksByDay } = useQuery({
     queryKey: ["clicks-by-day-analytics", selectedPeriod, refreshKey],
     queryFn: async () => {
-      const response = await fetch(`/api/analytics/clicks-by-day?days=${selectedPeriod}`);
-      if (!response.ok) throw new Error("Error al obtener datos de clics por día");
-      return response.json();
+      // Datos mock para GitHub Pages
+      const days = parseInt(selectedPeriod);
+      const clicksByDay = Array.from({ length: days }, (_, i) => ({
+        date: new Date(Date.now() - (days - 1 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        count: Math.floor(Math.random() * 10) + 2
+      }));
+      
+      return {
+        totalClicks: clicksByDay.reduce((sum, day) => sum + day.count, 0),
+        previousClicks: Math.floor(Math.random() * 50) + 20,
+        clicksByDay
+      };
     },
   });
 
@@ -94,15 +121,9 @@ export default function AdminDashboard() {
   };
 
   // Función para cerrar sesión
-  const handleLogout = async () => {
-    try {
-      const response = await fetch("/api/auth/logout", { method: "POST" });
-      if (response.ok) {
-        window.location.href = "/admin-login";
-      }
-    } catch (error) {
-      console.error("Error al cerrar sesión:", error);
-    }
+  const handleLogout = () => {
+    logout();
+    window.location.href = "/admin-login";
   };
 
   // Función para exportar datos
