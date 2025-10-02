@@ -99,7 +99,8 @@ export default function Home() {
           >
             {/* Instagram Link */}
             <a 
-              href="/go/instagram" 
+              href={import.meta.env.PROD ? "/withgex/go/instagram" : "/go/instagram"}
+              onClick={() => handleLinkClick("https://www.instagram.com/withgex", "Instagram")}
               className="group flex items-center justify-between w-full bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 hover:from-purple-700 hover:via-pink-700 hover:to-rose-700 text-white font-semibold py-5 px-7 rounded-2xl shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl active:scale-95 relative overflow-hidden"
               data-testid="link-instagram"
             >
@@ -124,7 +125,8 @@ export default function Home() {
 
             {/* TikTok Link */}
             <a 
-              href="/go/tiktok" 
+              href={import.meta.env.PROD ? "/withgex/go/tiktok" : "/go/tiktok"}
+              onClick={() => handleLinkClick("https://www.tiktok.com/@gextrap", "TikTok")}
               className="group flex items-center justify-between w-full bg-gradient-to-r from-gray-900 via-black to-gray-900 hover:from-black hover:via-gray-900 hover:to-black text-white font-semibold py-5 px-7 rounded-2xl shadow-lg border-2 border-white/20 hover:border-white/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl active:scale-95 relative overflow-hidden"
               data-testid="link-tiktok"
             >
