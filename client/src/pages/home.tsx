@@ -83,7 +83,7 @@ export default function Home() {
               data-testid="avatar-withgex"
             >
               <img 
-                src={import.meta.env.PROD ? "/withgex/hasbulla-army-v2-orig-500x500mm.jpg" : "/hasbulla-army-v2-orig-500x500mm.jpg"}
+                src={import.meta.env.PROD ? "/links/hasbulla-army-v2-orig-500x500mm.jpg" : "/hasbulla-army-v2-orig-500x500mm.jpg"}
                 alt="WithGex Profile"
                 className="w-full h-full object-cover"
               />

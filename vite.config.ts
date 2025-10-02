@@ -19,7 +19,7 @@ export default defineConfig({
         ]
       : []),
   ],
-  base: process.env.GITHUB_PAGES === 'true' ? '/withgex/' : '/',
+  base: process.env.GITHUB_PAGES === 'true' ? '/links/' : '/',
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
