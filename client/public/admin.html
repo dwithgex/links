@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>withgex - Panel de Administración</title>
+    <title>withgex - Enlaces Sociales</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,8 +15,19 @@
         backdrop-filter: blur(20px);
         border: 1px solid rgba(255, 255, 255, 0.2);
       }
-      .discord-gradient {
-        background: linear-gradient(135deg, #5865F2 0%, #4752C4 100%);
+      .social-button {
+        transition: all 0.3s ease;
+        transform: perspective(1000px) rotateX(0deg);
+      }
+      .social-button:hover {
+        transform: perspective(1000px) rotateX(10deg) translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+      .instagram-gradient {
+        background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
+      }
+      .tiktok-gradient {
+        background: linear-gradient(45deg, #000000 0%, #1a1a1a 100%);
       }
     </style>
   </head>
@@ -25,212 +36,108 @@
     <div class="absolute inset-0 overflow-hidden pointer-events-none">
       <div class="absolute top-20 left-10 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl"></div>
       <div class="absolute bottom-40 right-10 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+      <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-500/5 rounded-full blur-3xl"></div>
     </div>
 
     <div class="relative z-10 min-h-screen flex items-center justify-center px-4">
-      <!-- Login Form -->
-      <div id="loginForm" class="w-full max-w-md">
-        <div class="glass-card rounded-2xl p-8 shadow-xl">
-          <div class="text-center mb-6">
-            <div class="flex justify-center mb-4">
-              <div class="p-3 bg-purple-500/20 rounded-full">
-                <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                </svg>
+      <div class="w-full max-w-md">
+        <div class="glass-card rounded-2xl p-8 shadow-xl text-center">
+          <!-- Profile Section -->
+          <div class="mb-8">
+            <div class="flex justify-center mb-6">
+              <div class="relative">
+                <img 
+                  src="https://dwithgex.github.io/withgex/hasbulla-army-v2-orig-500x500mm.jpg" 
+                  alt="withgex profile" 
+                  class="w-24 h-24 rounded-full border-4 border-purple-400/50 shadow-xl"
+                  onerror="this.src='./hasbulla-army-v2-orig-500x500mm.jpg'"
+                >
+                <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white shadow-lg"></div>
               </div>
             </div>
-            <h1 class="text-2xl font-bold text-white mb-2">Panel de Administración</h1>
-            <p class="text-slate-300">Autorízate con Discord para acceder a las estadísticas</p>
+            <h1 class="text-3xl font-bold text-white mb-2">withgex</h1>
+            <p class="text-slate-300 text-lg">Sígueme en mis redes sociales</p>
           </div>
           
-          <button 
-            onclick="loginWithDiscord()" 
-            class="w-full discord-gradient text-white font-semibold py-4 px-6 rounded-xl shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl active:scale-95 relative overflow-hidden group"
-          >
-            <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-            <div class="flex items-center justify-center gap-3 relative z-10">
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+          <!-- Social Media Buttons -->
+          <div class="space-y-4">
+            <a 
+              href="https://www.instagram.com/withgex" 
+              target="_blank"
+              class="social-button w-full instagram-gradient text-white font-semibold py-4 px-6 rounded-xl shadow-lg flex items-center justify-center gap-3 relative overflow-hidden group"
+            >
+              <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+              <svg class="w-6 h-6 relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
               </svg>
-              <span>Autorizar con Discord</span>
-            </div>
-          </button>
-          
-          <div class="text-center text-sm text-slate-400 border-t border-slate-600 pt-4 mt-6">
-            <p>Solo usuarios autorizados pueden acceder</p>
-          </div>
-        </div>
-      </div>
+              <span class="text-lg relative z-10">Instagram</span>
+            </a>
 
-      <!-- Admin Panel -->
-      <div id="adminPanel" class="w-full max-w-6xl hidden">
-        <div class="space-y-6">
-          <!-- Header -->
-          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            <div>
-              <h1 class="text-3xl font-bold text-white mb-2">Panel de Análisis</h1>
-              <h2 class="text-xl text-slate-300">Estadísticas de withgex</h2>
-              <p class="text-sm text-slate-400 mt-2">• Última actualización: <span id="lastUpdate"></span></p>
-            </div>
-            
-            <div class="flex items-center gap-4">
-              <button onclick="refreshData()" class="flex items-center gap-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                </svg>
-                Actualizar
-              </button>
-              
-              <button onclick="logout()" class="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                </svg>
-                Salir
-              </button>
-            </div>
+            <a 
+              href="https://www.tiktok.com/@gextrap" 
+              target="_blank"
+              class="social-button w-full tiktok-gradient text-white font-semibold py-4 px-6 rounded-xl shadow-lg flex items-center justify-center gap-3 relative overflow-hidden group"
+            >
+              <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+              <svg class="w-6 h-6 relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-.88-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"/>
+              </svg>
+              <span class="text-lg relative z-10">TikTok</span>
+            </a>
+
+            <a 
+              href="https://dwithgex.github.io/withgex/" 
+              target="_blank"
+              class="social-button w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-4 px-6 rounded-xl shadow-lg flex items-center justify-center gap-3 relative overflow-hidden group"
+            >
+              <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+              <svg class="w-6 h-6 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+              </svg>
+              <span class="text-lg relative z-10">Sitio Principal</span>
+            </a>
           </div>
 
-          <!-- Stats Cards -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="glass-card rounded-xl p-6">
-              <h3 class="text-lg font-semibold text-white mb-2">Usuarios Únicos</h3>
-              <p class="text-3xl font-bold text-purple-400" id="uniqueUsers">0</p>
-              <p class="text-sm text-slate-400 mt-1">visitantes identificados</p>
-            </div>
-            
-            <div class="glass-card rounded-xl p-6">
-              <h3 class="text-lg font-semibold text-white mb-2">Visitas Totales</h3>
-              <p class="text-3xl font-bold text-blue-400" id="totalVisits">0</p>
-              <p class="text-sm text-slate-400 mt-1">entradas registradas</p>
-            </div>
-            
-            <div class="glass-card rounded-xl p-6">
-              <h3 class="text-lg font-semibold text-white mb-2">Clics en Redes</h3>
-              <p class="text-3xl font-bold text-green-400" id="totalClicks">0</p>
-              <p class="text-sm text-slate-400 mt-1">interacciones sociales</p>
-            </div>
-          </div>
-
-          <!-- Quick Links -->
-          <div class="glass-card rounded-xl p-6">
-            <h3 class="text-lg font-semibold text-white mb-4">Enlaces Rápidos</h3>
-            <div class="flex flex-wrap gap-4">
-              <a href="https://dwithgex.github.io/withgex/" target="_blank" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
-                Ver Sitio Principal
-              </a>
-              <a href="https://www.instagram.com/withgex" target="_blank" class="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors">
-                Instagram
-              </a>
-              <a href="https://www.tiktok.com/@gextrap" target="_blank" class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">
-                TikTok
-              </a>
-            </div>
+          <!-- Footer -->
+          <div class="text-center text-sm text-slate-400 border-t border-slate-600 pt-6 mt-8">
+            <p>© 2025 withgex • Todos los derechos reservados</p>
           </div>
         </div>
       </div>
     </div>
 
     <script>
-      const AUTHORIZED_USER_ID = '608975542783574016';
-      const DISCORD_CLIENT_ID = '1291760647004528701'; // Tu Discord App Client ID
-      const REDIRECT_URI = 'https://dwithgex.github.io/withgex/admin.html';
-
-      function loginWithDiscord() {
-        const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify`;
-        window.location.href = discordAuthUrl;
-      }
-
-      async function handleDiscordCallback() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-        
-        if (code) {
-          try {
-            // En un entorno real, esto se haría en el backend
-            // Para GitHub Pages, vamos a simular la validación
-            
-            // Limpiar la URL
-            window.history.replaceState({}, document.title, window.location.pathname);
-            
-            // Simular obtención de datos del usuario desde Discord
-            // En producción real, esto requeriría un servidor backend
-            const mockUserData = {
-              id: AUTHORIZED_USER_ID,
-              username: 'withgex',
-              discriminator: '0000',
-              avatar: null
-            };
-            
-            if (mockUserData.id === AUTHORIZED_USER_ID) {
-              localStorage.setItem('discord_auth', JSON.stringify({
-                user: mockUserData,
-                timestamp: new Date().toISOString()
-              }));
-              showAdminPanel();
-            } else {
-              throw new Error('Usuario no autorizado');
-            }
-          } catch (error) {
-            console.error('Error en autenticación:', error);
-            alert('❌ Error de autenticación: Usuario no autorizado');
-            showLoginForm();
-          }
-        }
-      }
-
-      function checkAuth() {
-        const auth = localStorage.getItem('discord_auth');
-        if (auth) {
-          try {
-            const authData = JSON.parse(auth);
-            if (authData.user && authData.user.id === AUTHORIZED_USER_ID) {
-              showAdminPanel();
-              return true;
-            }
-          } catch (e) {
-            localStorage.removeItem('discord_auth');
-          }
-        }
-        return false;
-      }
-
-      function logout() {
-        if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
-          localStorage.removeItem('discord_auth');
-          showLoginForm();
-        }
-      }
-
-      function showAdminPanel() {
-        document.getElementById('loginForm').classList.add('hidden');
-        document.getElementById('adminPanel').classList.remove('hidden');
-        refreshData();
-      }
-
-      function showLoginForm() {
-        document.getElementById('loginForm').classList.remove('hidden');
-        document.getElementById('adminPanel').classList.add('hidden');
-      }
-
-      function refreshData() {
-        // Actualizar estadísticas con datos aleatorios realistas
-        document.getElementById('uniqueUsers').textContent = Math.floor(Math.random() * 100) + 50;
-        document.getElementById('totalVisits').textContent = Math.floor(Math.random() * 500) + 200;
-        document.getElementById('totalClicks').textContent = Math.floor(Math.random() * 200) + 80;
-        document.getElementById('lastUpdate').textContent = new Date().toLocaleString('es-ES');
-      }
-
-      // Inicializar al cargar la página
+      // Animaciones suaves al cargar
       window.addEventListener('load', function() {
-        // Verificar si hay un código de Discord en la URL
-        if (window.location.search.includes('code=')) {
-          handleDiscordCallback();
-        } else {
-          // Verificar autenticación existente
-          if (!checkAuth()) {
-            showLoginForm();
+        const elements = document.querySelectorAll('.social-button');
+        elements.forEach((el, index) => {
+          setTimeout(() => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease';
+            
+            setTimeout(() => {
+              el.style.opacity = '1';
+              el.style.transform = 'translateY(0)';
+            }, 100);
+          }, index * 100);
+        });
+      });
+
+      // Track clicks para analytics
+      document.querySelectorAll('a[target="_blank"]').forEach(link => {
+        link.addEventListener('click', function() {
+          const platform = this.textContent.trim();
+          console.log(`Clic en: ${platform}`);
+          
+          // Aquí podrías enviar datos a Google Analytics u otro servicio
+          if (typeof gtag !== 'undefined') {
+            gtag('event', 'social_click', {
+              'platform': platform,
+              'timestamp': new Date().toISOString()
+            });
           }
-        }
+        });
       });
     </script>
   </body>
