@@ -26,35 +26,41 @@ export default function Home() {
   }, []);
 
   const handleLinkClick = async (url: string, platform: string, event?: React.MouseEvent) => {
-    if (event) {
-      event.preventDefault();
-    }
-    
+    // Solo hacer tracking en background sin interferir con la navegación
     try {
       console.log(`🔄 Tracking click en ${platform}...`);
       
-      // Registrar el click
-      await apiRequest("POST", "/api/track/click", {
-        platform,
-        url,
-        timestamp: new Date().toISOString(),
+      // Hacer el tracking de forma asíncrona sin bloquear la navegación
+      Promise.all([
+        apiRequest("POST", "/api/track/click", {
+          platform,
+          url,
+          timestamp: new Date().toISOString(),
+        }),
+        apiRequest("POST", "/api/track/visit", {
+          referrer: `click-${platform}`,
+          userAgent: navigator.userAgent || null,
+        })
+      ]).then(() => {
+        console.log(`✅ Click en ${platform} registrado correctamente`);
+      }).catch((error) => {
+        console.error(`❌ Error al registrar click en ${platform}:`, error);
       });
-      
-      // También registrar una visita adicional cuando hacen clic hacia redes sociales
-      // Esto cuenta las interacciones que llevan al apartado de redes
-      await apiRequest("POST", "/api/track/visit", {
-        referrer: `click-${platform}`, // Identificamos que es una visita por click
-        userAgent: navigator.userAgent || null,
-      });
-      
-      console.log(`✅ Click en ${platform} registrado correctamente`);
       
     } catch (error) {
       console.error(`❌ Error al registrar click en ${platform}:`, error);
     }
     
-    // Abrir enlace directamente
-    window.open(url, "_blank");
+    // En móvil, usar setTimeout para asegurar la navegación
+    if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      if (event) {
+        event.preventDefault();
+      }
+      setTimeout(() => {
+        window.location.href = url;
+      }, 100);
+    }
+    // En desktop, funciona normalmente con target="_blank"
   };
 
   return (
@@ -105,10 +111,11 @@ export default function Home() {
             <a 
               href="https://www.instagram.com/withgex"
               onClick={(e) => handleLinkClick("https://www.instagram.com/withgex", "Instagram", e)}
-              className="group flex items-center justify-between w-full bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 hover:from-purple-700 hover:via-pink-700 hover:to-rose-700 text-white font-semibold py-5 px-7 rounded-2xl shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl active:scale-95 relative overflow-hidden"
+              className="group flex items-center justify-between w-full bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 hover:from-purple-700 hover:via-pink-700 hover:to-rose-700 text-white font-semibold py-5 px-7 rounded-2xl shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl active:scale-95 relative overflow-hidden touch-manipulation"
               data-testid="link-instagram"
               target="_blank"
               rel="noopener noreferrer"
+              style={{ touchAction: 'manipulation' }}
             >
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
               <div className="flex items-center gap-4 relative z-10">
@@ -133,10 +140,11 @@ export default function Home() {
             <a 
               href="https://www.tiktok.com/@gextrap"
               onClick={(e) => handleLinkClick("https://www.tiktok.com/@gextrap", "TikTok", e)}
-              className="group flex items-center justify-between w-full bg-gradient-to-r from-gray-900 via-black to-gray-900 hover:from-black hover:via-gray-900 hover:to-black text-white font-semibold py-5 px-7 rounded-2xl shadow-lg border-2 border-white/20 hover:border-white/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl active:scale-95 relative overflow-hidden"
+              className="group flex items-center justify-between w-full bg-gradient-to-r from-gray-900 via-black to-gray-900 hover:from-black hover:via-gray-900 hover:to-black text-white font-semibold py-5 px-7 rounded-2xl shadow-lg border-2 border-white/20 hover:border-white/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl active:scale-95 relative overflow-hidden touch-manipulation"
               data-testid="link-tiktok"
               target="_blank"
               rel="noopener noreferrer"
+              style={{ touchAction: 'manipulation' }}
             >
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
               <div className="flex items-center gap-4 relative z-10">
