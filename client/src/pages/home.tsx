@@ -25,7 +25,11 @@ export default function Home() {
     trackVisit();
   }, []);
 
-    const handleLinkClick = async (url: string, platform: string) => {
+  const handleLinkClick = async (url: string, platform: string, event?: React.MouseEvent) => {
+    if (event) {
+      event.preventDefault();
+    }
+    
     try {
       console.log(`🔄 Tracking click en ${platform}...`);
       
@@ -49,7 +53,7 @@ export default function Home() {
       console.error(`❌ Error al registrar click en ${platform}:`, error);
     }
     
-    // Abrir enlace
+    // Abrir enlace directamente
     window.open(url, "_blank");
   };
 
@@ -99,10 +103,12 @@ export default function Home() {
           >
             {/* Instagram Link */}
             <a 
-              href={import.meta.env.PROD ? "/withgex/go/instagram" : "/go/instagram"}
-              onClick={() => handleLinkClick("https://www.instagram.com/withgex", "Instagram")}
+              href="https://www.instagram.com/withgex"
+              onClick={(e) => handleLinkClick("https://www.instagram.com/withgex", "Instagram", e)}
               className="group flex items-center justify-between w-full bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 hover:from-purple-700 hover:via-pink-700 hover:to-rose-700 text-white font-semibold py-5 px-7 rounded-2xl shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl active:scale-95 relative overflow-hidden"
               data-testid="link-instagram"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
               <div className="flex items-center gap-4 relative z-10">
@@ -125,10 +131,12 @@ export default function Home() {
 
             {/* TikTok Link */}
             <a 
-              href={import.meta.env.PROD ? "/withgex/go/tiktok" : "/go/tiktok"}
-              onClick={() => handleLinkClick("https://www.tiktok.com/@gextrap", "TikTok")}
+              href="https://www.tiktok.com/@gextrap"
+              onClick={(e) => handleLinkClick("https://www.tiktok.com/@gextrap", "TikTok", e)}
               className="group flex items-center justify-between w-full bg-gradient-to-r from-gray-900 via-black to-gray-900 hover:from-black hover:via-gray-900 hover:to-black text-white font-semibold py-5 px-7 rounded-2xl shadow-lg border-2 border-white/20 hover:border-white/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl active:scale-95 relative overflow-hidden"
               data-testid="link-tiktok"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
               <div className="flex items-center gap-4 relative z-10">
