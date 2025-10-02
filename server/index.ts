@@ -1,20 +1,29 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { storage } from "./storage";
+import dotenv from "dotenv";
+
+// Load environment variables
+dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 3001;
 
 declare module 'http' {
   interface IncomingMessage {
     rawBody: unknown
   }
 }
+
 app.use(express.json({
   verify: (req, _res, buf) => {
     req.rawBody = buf;
   }
 }));
 app.use(express.urlencoded({ extended: false }));
+
+app.use(express.static("dist"));
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -47,35 +56,60 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  const server = await registerRoutes(app);
+  try {
+    const server = await registerRoutes(app);
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+    app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+      const status = err.status || err.statusCode || 500;
+      const message = err.message || "Internal Server Error";
 
-    res.status(status).json({ message });
-    throw err;
-  });
+      res.status(status).json({ message });
+      console.error(err);
+    });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
+    // setup vite in development
+    if (process.env.NODE_ENV === "development") {
+      await setupVite(app, server);
+    } else {
+      serveStatic(app);
+    }
+
+    // Para Vercel, exportamos la app en lugar de hacer listen
+    if (process.env.VERCEL) {
+      // Limpiar datos antiguos en Vercel (sin bloquear)
+      storage.cleanOldData().then(cleanupResult => {
+        if (cleanupResult.deletedVisits > 0 || cleanupResult.deletedClicks > 0) {
+          console.log(`🧹 Limpieza automática completada: ${cleanupResult.deletedVisits} visitas y ${cleanupResult.deletedClicks} clics antiguos eliminados`);
+        }
+      }).catch(error => {
+        console.error('❌ Error en limpieza automática:', error);
+      });
+    } else {
+      // Para desarrollo local
+      const port = parseInt(process.env.PORT || '3001', 10);
+      server.listen(port, '0.0.0.0', async () => {
+        console.log(`🚀 Servidor corriendo en http://localhost:${port}`);
+        log(`serving on port ${port}`);
+        
+        // Limpiar datos antiguos al iniciar el servidor
+        try {
+          const cleanupResult = await storage.cleanOldData();
+          if (cleanupResult.deletedVisits > 0 || cleanupResult.deletedClicks > 0) {
+            console.log(`🧹 Limpieza automática completada: ${cleanupResult.deletedVisits} visitas y ${cleanupResult.deletedClicks} clics antiguos eliminados`);
+          }
+        } catch (error) {
+          console.error('❌ Error en limpieza automática:', error);
+        }
+      });
+    }
+
+  } catch (error) {
+    console.error('Error starting server:', error);
+    if (!process.env.VERCEL) {
+      process.exit(1);
+    }
   }
-
-  // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = parseInt(process.env.PORT || '5000', 10);
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
-  });
 })();
+
+// Exportar para Vercel
+export default app;

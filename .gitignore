@@ -1,6 +1,45 @@
-node_modules
-dist
+# Dependencies
+node_modules/
+.npm
+*.tgz
+
+# Build outputs
+dist/
+build/
+.vite/
+
+# Environment variables (NUNCA subir estos archivos)
+.env
+.env.local
+.env.production
+.env.development
+
+# Database
+database.db
+*.db
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
 .DS_Store
+Thumbs.db
+
+# Session storage
+sessions/
 server/public
-vite.config.ts.*
 *.tar.gz

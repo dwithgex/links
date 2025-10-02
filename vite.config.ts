@@ -19,6 +19,7 @@ export default defineConfig({
         ]
       : []),
   ],
+  base: process.env.GITHUB_PAGES === 'true' ? '/withgex/' : '/',
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
@@ -28,7 +29,7 @@ export default defineConfig({
   },
   root: path.resolve(import.meta.dirname, "client"),
   build: {
-    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    outDir: path.resolve(import.meta.dirname, "dist"),
     emptyOutDir: true,
   },
   server: {
@@ -36,5 +37,6 @@ export default defineConfig({
       strict: true,
       deny: ["**/.*"],
     },
+    port: 3000,
   },
 });
