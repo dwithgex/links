@@ -7,7 +7,7 @@ import Home from "@/pages/home";
 import NotFound from "@/pages/not-found";
 
 // Configurar el base path para GitHub Pages
-const basePath = import.meta.env.PROD ? "/links" : "";
+const basePath = import.meta.env.PROD ? "/withgex" : "";
 
 function Router() {
   return (
