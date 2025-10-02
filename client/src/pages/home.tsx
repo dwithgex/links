@@ -83,7 +83,7 @@ export default function Home() {
               data-testid="avatar-withgex"
             >
               <img 
-                src={import.meta.env.PROD ? "/withgex/hasbulla-army-v2-orig-500x500mm.jpg" : "/hasbulla-army-v2-orig-500x500mm.jpg"}
+                src={import.meta.env.PROD ? "/links/hasbulla-army-v2-orig-500x500mm.jpg" : "/hasbulla-army-v2-orig-500x500mm.jpg"}
                 alt="WithGex Profile"
                 className="w-full h-full object-cover"
               />
@@ -159,6 +159,35 @@ export default function Home() {
                   </svg>
                 </div>
                 <span className="text-xl">TikTok</span>
+              </div>
+              <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+
+            {/* YouTube Link */}
+            <a 
+              href="https://www.youtube.com/@WithGex?sub_confirmation=1"
+              onClick={(e) => handleLinkClick("https://www.youtube.com/@WithGex?sub_confirmation=1", "YouTube", e)}
+              className="group flex items-center justify-between w-full bg-gradient-to-r from-red-600 via-red-500 to-red-600 hover:from-red-700 hover:via-red-600 hover:to-red-700 text-white font-semibold py-5 px-7 rounded-2xl shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl active:scale-95 relative overflow-hidden touch-manipulation"
+              data-testid="link-youtube"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ touchAction: 'manipulation' }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+              <div className="flex items-center gap-4 relative z-10">
+                <div className="p-2 bg-white/20 rounded-xl group-hover:bg-white/30 transition-colors">
+                  <svg 
+                    className="w-7 h-7" 
+                    fill="currentColor" 
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                  </svg>
+                </div>
+                <span className="text-xl">YouTube</span>
               </div>
               <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
