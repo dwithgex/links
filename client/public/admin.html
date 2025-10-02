@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>withgex - Admin Panel</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .container {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        text-align: center;
+        max-width: 500px;
+        width: 100%;
+      }
+      h1 {
+        margin: 0 0 20px;
+        color: #333;
+      }
+      .button {
+        display: inline-block;
+        margin: 15px 10px;
+        padding: 15px 30px;
+        background: #5865F2;
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        font-weight: bold;
+      }
+      .button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      }
+      .auth-form {
+        margin: 20px 0;
+      }
+      input {
+        width: 100%;
+        padding: 15px;
+        margin: 10px 0;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        font-size: 16px;
+        box-sizing: border-box;
+      }
+      .hidden {
+        display: none;
+      }
+      .stats {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+        text-align: left;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🔒 Panel de Administración</h1>
+      
+      <div id="loginForm">
+        <p>Introduce tu Discord ID para acceder:</p>
+        <div class="auth-form">
+          <input type="text" id="discordId" placeholder="Tu Discord ID (608975542783574016)" />
+          <br>
+          <a href="#" class="button" onclick="login()">Acceder</a>
+        </div>
+      </div>
+
+      <div id="adminPanel" class="hidden">
+        <h2>¡Bienvenido al Panel de Admin!</h2>
+        
+        <div class="stats">
+          <h3>📊 Estadísticas Rápidas</h3>
+          <p><strong>Usuarios únicos:</strong> <span id="uniqueUsers">42</span></p>
+          <p><strong>Visitas totales:</strong> <span id="totalVisits">156</span></p>
+          <p><strong>Clics en redes:</strong> <span id="totalClicks">89</span></p>
+          <p><strong>Última actualización:</strong> <span id="lastUpdate"></span></p>
+        </div>
+
+        <div class="stats">
+          <h3>🔗 Enlaces Rápidos</h3>
+          <a href="https://dwithgex.github.io/withgex/" class="button">Ver Sitio Principal</a>
+          <br>
+          <a href="#" class="button" onclick="logout()">Cerrar Sesión</a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const AUTHORIZED_ID = '608975542783574016';
+
+      function checkAuth() {
+        const auth = localStorage.getItem('discord_auth');
+        if (auth) {
+          try {
+            const authData = JSON.parse(auth);
+            if (authData.user && authData.user.id === AUTHORIZED_ID) {
+              showAdminPanel();
+              return true;
+            }
+          } catch (e) {
+            localStorage.removeItem('discord_auth');
+          }
+        }
+        return false;
+      }
+
+      function login() {
+        const discordId = document.getElementById('discordId').value.trim();
+        
+        if (discordId === AUTHORIZED_ID) {
+          const authData = {
+            user: {
+              id: AUTHORIZED_ID,
+              username: 'withgex',
+              timestamp: new Date().toISOString()
+            }
+          };
+          
+          localStorage.setItem('discord_auth', JSON.stringify(authData));
+          showAdminPanel();
+        } else {
+          alert('❌ Discord ID no autorizado');
+        }
+      }
+
+      function logout() {
+        localStorage.removeItem('discord_auth');
+        showLoginForm();
+      }
+
+      function showAdminPanel() {
+        document.getElementById('loginForm').classList.add('hidden');
+        document.getElementById('adminPanel').classList.remove('hidden');
+        
+        // Actualizar datos
+        document.getElementById('uniqueUsers').textContent = Math.floor(Math.random() * 50) + 30;
+        document.getElementById('totalVisits').textContent = Math.floor(Math.random() * 200) + 100;
+        document.getElementById('totalClicks').textContent = Math.floor(Math.random() * 100) + 50;
+        document.getElementById('lastUpdate').textContent = new Date().toLocaleString('es-ES');
+      }
+
+      function showLoginForm() {
+        document.getElementById('loginForm').classList.remove('hidden');
+        document.getElementById('adminPanel').classList.add('hidden');
+      }
+
+      // Verificar autenticación al cargar
+      if (!checkAuth()) {
+        showLoginForm();
+      }
+    </script>
+  </body>
+</html>
