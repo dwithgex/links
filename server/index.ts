@@ -74,6 +74,7 @@ app.use((req, res, next) => {
       serveStatic(app);
     }
 
+<<<<<<< HEAD
     const port = parseInt(process.env.PORT || '3001', 10);
     server.listen(port, '0.0.0.0', async () => {
       console.log(`🚀 Servidor corriendo en http://localhost:${port}`);
@@ -93,5 +94,44 @@ app.use((req, res, next) => {
   } catch (error) {
     console.error('Error starting server:', error);
     process.exit(1);
+=======
+    // Para Vercel, exportamos la app en lugar de hacer listen
+    if (process.env.VERCEL) {
+      // Limpiar datos antiguos en Vercel (sin bloquear)
+      storage.cleanOldData().then(cleanupResult => {
+        if (cleanupResult.deletedVisits > 0 || cleanupResult.deletedClicks > 0) {
+          console.log(`🧹 Limpieza automática completada: ${cleanupResult.deletedVisits} visitas y ${cleanupResult.deletedClicks} clics antiguos eliminados`);
+        }
+      }).catch(error => {
+        console.error('❌ Error en limpieza automática:', error);
+      });
+    } else {
+      // Para desarrollo local
+      const port = parseInt(process.env.PORT || '3001', 10);
+      server.listen(port, '0.0.0.0', async () => {
+        console.log(`🚀 Servidor corriendo en http://localhost:${port}`);
+        log(`serving on port ${port}`);
+        
+        // Limpiar datos antiguos al iniciar el servidor
+        try {
+          const cleanupResult = await storage.cleanOldData();
+          if (cleanupResult.deletedVisits > 0 || cleanupResult.deletedClicks > 0) {
+            console.log(`🧹 Limpieza automática completada: ${cleanupResult.deletedVisits} visitas y ${cleanupResult.deletedClicks} clics antiguos eliminados`);
+          }
+        } catch (error) {
+          console.error('❌ Error en limpieza automática:', error);
+        }
+      });
+    }
+
+  } catch (error) {
+    console.error('Error starting server:', error);
+    if (!process.env.VERCEL) {
+      process.exit(1);
+    }
+>>>>>>> 4f71e0b0b3e08b59840f452305027bdcf6486730
   }
 })();
+
+// Exportar para Vercel
+export default app;

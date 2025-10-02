@@ -1,6 +1,7 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+<<<<<<< HEAD
   "installCommand": "npm install",
   "framework": null,
   "functions": {
@@ -21,4 +22,13 @@
   "env": {
     "NODE_ENV": "production"
   }
+=======
+  "framework": null,
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+>>>>>>> 4f71e0b0b3e08b59840f452305027bdcf6486730
 }
