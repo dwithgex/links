@@ -59,6 +59,7 @@ export function useDiscordAuth() {
     localStorage.removeItem('discord_auth');
     setUser(null);
     setIsAuthorized(false);
+    console.log('Sesión cerrada correctamente');
   };
 
   return {

@@ -14,6 +14,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   useEffect(() => {
     if (!isLoading && !isAuthorized) {
+      console.log('Usuario no autorizado, redirigiendo a login');
       navigate('/admin-login?error=unauthorized');
     }
   }, [isLoading, isAuthorized, navigate]);

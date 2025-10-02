@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { RefreshCw, Download, LogOut, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useDiscordAuth } from "@/hooks/useDiscordAuth";
+import { useLocation } from "wouter";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,6 +23,7 @@ export default function AdminDashboard() {
   const [selectedPeriod, setSelectedPeriod] = useState("7");
   const [refreshKey, setRefreshKey] = useState(0);
   const { logout } = useDiscordAuth();
+  const [, navigate] = useLocation();
   
   const currentDate = new Date().toLocaleDateString('es-ES', {
     year: 'numeric',
@@ -123,7 +125,8 @@ export default function AdminDashboard() {
   // Función para cerrar sesión
   const handleLogout = () => {
     logout();
-    window.location.href = "/admin-login";
+    // Usar navigate de wouter para redireccionar
+    navigate("/admin-login");
   };
 
   // Función para exportar datos
