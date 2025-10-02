@@ -7,36 +7,50 @@ export default function Home() {
   useEffect(() => {
     setIsVisible(true);
     
-    apiRequest("POST", "/api/track/visit", {
-      referrer: document.referrer || null,
-      userAgent: navigator.userAgent || null,
-    }).catch((error) => {
-      console.error("Failed to track visit:", error);
-    });
-  }, []);
-
-  const handleLinkClick = async (platform: string, url: string) => {
-    const trackData = {
-      platform,
-      url,
-      referrer: document.referrer || null,
+    // Tracking de visita mejorado con debug
+    const trackVisit = async () => {
+      try {
+        console.log("🔄 Iniciando tracking de visita...");
+        const response = await apiRequest("POST", "/api/track/visit", {
+          referrer: document.referrer || null,
+          userAgent: navigator.userAgent || null,
+        });
+        console.log("✅ Visita registrada correctamente:", response);
+        
+      } catch (error) {
+        console.error("❌ Error al registrar visita:", error);
+      }
     };
 
-    if (navigator.sendBeacon) {
-      const blob = new Blob([JSON.stringify(trackData)], { type: "application/json" });
-      navigator.sendBeacon("/api/track/click", blob);
-    } else {
-      try {
-        await fetch("/api/track/click", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(trackData),
-          keepalive: true,
-        });
-      } catch (error) {
-        console.error("Failed to track click:", error);
-      }
+    trackVisit();
+  }, []);
+
+    const handleLinkClick = async (url: string, platform: string) => {
+    try {
+      console.log(`🔄 Tracking click en ${platform}...`);
+      
+      // Registrar el click
+      await apiRequest("POST", "/api/track/click", {
+        platform,
+        url,
+        timestamp: new Date().toISOString(),
+      });
+      
+      // También registrar una visita adicional cuando hacen clic hacia redes sociales
+      // Esto cuenta las interacciones que llevan al apartado de redes
+      await apiRequest("POST", "/api/track/visit", {
+        referrer: `click-${platform}`, // Identificamos que es una visita por click
+        userAgent: navigator.userAgent || null,
+      });
+      
+      console.log(`✅ Click en ${platform} registrado correctamente`);
+      
+    } catch (error) {
+      console.error(`❌ Error al registrar click en ${platform}:`, error);
     }
+    
+    // Abrir enlace
+    window.open(url, "_blank");
   };
 
   return (
@@ -48,32 +62,22 @@ export default function Home() {
       </div>
 
       <div className="w-full max-w-2xl mx-auto px-4 md:px-6 relative z-10">
-        {/* Banner Section */}
-        <div 
-          className={`relative w-full h-56 md:h-72 rounded-t-2xl md:rounded-2xl overflow-hidden mb-0 md:mb-4 transition-opacity duration-600 shadow-2xl ${isVisible ? 'opacity-100 fade-in' : 'opacity-0'}`}
-        >
-          <img 
-            src="https://cdn.getallmylinks.com/cdn-cgi/image/w=860,h=1864,q=90,fit=cover,f=auto,onerror=redirect/https://images.getallmylinks.com/backgrounds/club-dorado-banner-1-68be1ccedc4d0163194063.jpg" 
-            alt="withgex profile banner - Club Dorado theme"
-            className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
-            data-testid="img-banner"
-          />
-          <div className="banner-overlay absolute inset-0"></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent"></div>
-        </div>
-
         {/* Profile Content Card */}
         <div 
-          className={`glass-card rounded-b-2xl md:rounded-2xl p-6 md:p-8 relative transition-all duration-600 delay-200 shadow-xl ${isVisible ? 'opacity-100 slide-up' : 'opacity-0'}`}
+          className={`glass-card rounded-2xl p-6 md:p-8 relative transition-all duration-600 delay-200 shadow-xl ${isVisible ? 'opacity-100 slide-up' : 'opacity-0'}`}
         >
           {/* Avatar Section */}
-          <div className="flex flex-col items-center -mt-20 md:-mt-24 mb-6">
+          <div className="flex flex-col items-center mb-6">
             <div 
-              className="w-36 h-36 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-primary via-accent to-secondary flex items-center justify-center text-white text-6xl md:text-7xl font-bold border-4 border-background avatar-glow relative group cursor-pointer transition-transform hover:scale-105"
+              className="w-36 h-36 md:w-40 md:h-40 rounded-full border-4 border-background shadow-2xl relative group cursor-pointer overflow-hidden"
               data-testid="avatar-withgex"
             >
-              <span className="relative z-10">W</span>
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 blur-xl group-hover:blur-2xl transition-all"></div>
+              <img 
+                src="/hasbulla-army-v2-orig-500x500mm.jpg" 
+                alt="WithGex Profile"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/10 to-accent/10"></div>
             </div>
           </div>
 
@@ -81,16 +85,12 @@ export default function Home() {
           <div 
             className={`text-center mb-10 transition-all duration-600 delay-300 ${isVisible ? 'opacity-100 slide-up' : 'opacity-0'}`}
           >
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent mb-3 tracking-tight" data-testid="text-username">
-              withgex
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent mb-3 tracking-tight leading-tight" data-testid="text-username">
+              WithGex
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground font-light mb-4" data-testid="text-handle">
               @withgex
             </p>
-            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span>Activo ahora</span>
-            </div>
           </div>
 
           {/* Social Links Section */}
@@ -99,10 +99,8 @@ export default function Home() {
           >
             {/* Instagram Link */}
             <a 
-              href="https://www.instagram.com/withgex" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              onClick={() => handleLinkClick("Instagram", "https://www.instagram.com/withgex")}
+              href="/go/instagram" 
+              onClick={() => handleLinkClick("https://www.instagram.com/withgex", "Instagram")}
               className="group flex items-center justify-between w-full bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 hover:from-purple-700 hover:via-pink-700 hover:to-rose-700 text-white font-semibold py-5 px-7 rounded-2xl shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl active:scale-95 relative overflow-hidden"
               data-testid="link-instagram"
             >
@@ -127,10 +125,8 @@ export default function Home() {
 
             {/* TikTok Link */}
             <a 
-              href="https://www.tiktok.com/@gextrap" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              onClick={() => handleLinkClick("TikTok", "https://www.tiktok.com/@gextrap")}
+              href="/go/tiktok" 
+              onClick={() => handleLinkClick("https://www.tiktok.com/@gextrap", "TikTok")}
               className="group flex items-center justify-between w-full bg-gradient-to-r from-gray-900 via-black to-gray-900 hover:from-black hover:via-gray-900 hover:to-black text-white font-semibold py-5 px-7 rounded-2xl shadow-lg border-2 border-white/20 hover:border-white/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl active:scale-95 relative overflow-hidden"
               data-testid="link-tiktok"
             >
@@ -161,10 +157,7 @@ export default function Home() {
           >
             <div className="h-px w-24 mx-auto bg-gradient-to-r from-transparent via-border to-transparent mb-6"></div>
             <p className="text-muted-foreground/80 text-sm mb-2">
-              © 2024 withgex. Todos mis enlaces en un solo lugar.
-            </p>
-            <p className="text-xs text-muted-foreground/60">
-              Creado con ❤️ para conectar
+              © 2025 withgex | Powered by Global Tools AI
             </p>
           </div>
         </div>
